@@ -12,18 +12,42 @@ const rainbow = [
 ];
 
 const navH1 = document.querySelector(`.logo-heading`);
+const body = document.querySelector("body");
+const homeContainer = document.querySelector(".home");
+const imgs = document.querySelectorAll("img");
+const ps = document.querySelectorAll("p"); // should be the first p in the document
+
+const modalContainer = document.createElement("section");
+const modal = document.createElement("section");
+const p = document.createElement("p");
+
+let rainbowIntervalID;
+let keyPressTime;
+let checkKeyPressIntervalId;
+let isTyping;
+let preventModal;
 
 const rainbowShifter = () => {
   rainbow.unshift(rainbow.pop());
 };
-
-let rainbowIntervalID;
-
 const setColor = nodeList => {
   nodeList.forEach((node, index) => {
     node.style.color = rainbow[(index + 1) % 7]; // color to reset to 0 at 7
   });
 };
+
+const showModalContainer = () => {
+  modalContainer.classList.add("appear");
+};
+
+const hideModalContainer = () => {
+  modalContainer.classList.remove("appear");
+};
+
+const getTime = () => new Date().getTime();
+const getTimeDifference = (firstTime, secondTime, format) =>
+  (secondTime - firstTime) / format;
+
 
 navH1.addEventListener("mouseenter", e => {
   // assign a letter a color
@@ -52,23 +76,10 @@ navH1.addEventListener("mouseleave", e => {
 });
 
 // keydown => animate key press on screen in box
-const modalContainer = document.createElement("section");
 modalContainer.classList.add("modalContainer");
-const modal = document.createElement("section");
 modalContainer.appendChild(modal);
 
-const body = document.querySelector("body");
-const homeContainer = document.querySelector(".home");
 homeContainer.prepend(modalContainer);
-
-let keyPressTime;
-let checkKeyPressIntervalId;
-let isTyping;
-let preventModal;
-
-const getTime = () => new Date().getTime();
-const getTimeDifference = (firstTime, secondTime, format) =>
-  (secondTime - firstTime) / format;
 
 body.addEventListener("keydown", ev => {
   if (preventModal) return;
@@ -82,23 +93,19 @@ body.addEventListener("keydown", ev => {
     isTyping = getTimeDifference(keyPressTime, now, 100) < 5;
   }, 100); // every half a second, check if user is still typing
 
-  modalContainer.classList.add("appear");
-  modal.classList.add("modalBox");
-  modal.textContent = ev.key;
+  showModalContainer();
 });
 
 body.addEventListener("keyup", ev => {
   setTimeout(() => {
     if (!isTyping && !preventModal) {
       clearInterval(checkKeyPressIntervalId);
-      modalContainer.classList.remove("appear");
-      modal.textContent = "";
-      modal.classList.remove("modalBox");
+      hideModalContainer();
+    
     }
   }, 500);
 });
 
-const imgs = document.querySelectorAll("img");
 imgs.forEach(img =>
   img.addEventListener("click", ev => {
     // on click, we get the file path for the image
@@ -108,10 +115,9 @@ imgs.forEach(img =>
     const img = document.createElement("img");
     // link img to source
     img.src = src;
-    modal.classList.add("imgModal");
     // place inside modal container
-    modalContainer.classList.add("appear");
-    modal.appendChild(img);
+    showModalContainer();
+    
     preventModal = true;
   })
 );
@@ -121,30 +127,35 @@ modalContainer.addEventListener("click", function(ev) {
   preventModal = false;
   const img = ev.target.querySelector("img");
   if (img) {
-    modal.removeChild(img);
-    modal.classList = "";
-    modalContainer.classList.remove("appear");
+    
+    hideModalContainer();
   }
 });
 
 // select event
-const pList = document.querySelectorAll("p"); // should be the first p in the document
-pList.forEach(p => {
-  p.addEventListener("dblclick", ev => {
-    p.contentEditable = true;
-    p.classList.add("editable");
-    p.focus();
+ps.forEach(pNode => {
+  pNode.addEventListener("dblclick", ev => {
+    pNode.contentEditable = true;
+    pNode.classList.add("editable");
+    pNode.focus();
     preventModal = true;
   });
 
-  p.addEventListener("keydown", ({ keyCode }) => {
+  pNode.addEventListener("keydown", ({ keyCode }) => {
     if (keyCode === 27) {
-      p.contentEditable = false;
-      p.classList.remove("editable");
+      pNode.contentEditable = false;
+      pNode.classList.remove("editable");
       setTimeout(() => {
         preventModal = false;
-      }, 100)
+      }, 100);
     }
+  });
+
+  pNode.addEventListener("focus", ev => {
+    p.textContent = pNode.textContent;
+    p.contentEditable = true;
+    modal.appendChild(p);
+    showModalContainer();
   });
 
   // p.addEventListener("select", ev => {
