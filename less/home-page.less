@@ -1,5 +1,4 @@
 .home {
-
   .intro {
     padding: 90px 0 10px;
     border-bottom: 2px dashed @navigation-border;
@@ -20,8 +19,6 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
-   
-    
     .text-content {
       width: 48%;
       padding-right: 1%;
@@ -105,10 +102,50 @@
         width: 80%;
         margin: 0 auto 30px;
       }
-      
+
       .btn {
-        .button-creator(200px, 45px, @button-bg, @white, 1.8rem);     
+        .button-creator(200px, 45px, @button-bg, @white, 1.8rem);
       }
     }
   }
-}// home
+} // home
+
+.modalContainer {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: none;
+}
+
+.appear {
+  .flex-center();
+  position: fixed;
+  left: 0;
+}
+
+.modalBox {
+  min-width: 25%;
+  max-width: auto;
+  height: 25%;
+  max-height: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  .flex-center();
+  font-size: 15rem;
+  color: white;
+  border-radius: 1rem;
+}
+
+.imgModal {
+  max-width: 75%;
+  cursor: pointer;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editable {
+  border: 2px dashed gray;
+}

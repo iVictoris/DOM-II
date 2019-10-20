@@ -350,3 +350,41 @@ img {
   background: #FFFFFF;
   color: #17A2B8;
 }
+.modalContainer {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: none;
+}
+.appear {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  left: 0;
+}
+.modalBox {
+  min-width: 25%;
+  max-width: auto;
+  height: 25%;
+  max-height: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15rem;
+  color: white;
+  border-radius: 1rem;
+}
+.imgModal {
+  max-width: 75%;
+  cursor: pointer;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.editable {
+  border: 2px dashed gray;
+}
