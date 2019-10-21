@@ -398,3 +398,44 @@ img {
   min-height: 200px;
   margin: 0 auto;
 }
+.flash {
+  width: 100vw;
+  height: 100vh;
+  animation: flashy 10s ease-in-out;
+  position: fixed;
+}
+@keyframes flashy {
+  0% {
+    background: #000000;
+  }
+  10% {
+    background: rgba(50, 50, 50, 0.9);
+  }
+  20% {
+    background: rgba(100, 100, 100, 0.8);
+  }
+  30% {
+    background: rgba(150, 150, 150, 0.7);
+  }
+  40% {
+    background: rgba(200, 200, 200, 0.6);
+  }
+  50% {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  60% {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  70% {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  80% {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  90% {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    background: rgba(255, 255, 255, 0);
+  }
+}
