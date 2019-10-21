@@ -201,3 +201,16 @@ modalContainer.addEventListener('keydown', ({keyCode}) => {
     startKeyPressModal();
   }
 })
+
+window.addEventListener('load', (ev) => {
+  // flashy load screen
+  const flashyLoader = document.createElement('section');
+
+  body.prepend(flashyLoader)
+  flashyLoader.classList = 'flash';
+
+  // wait 5 seconds, and remove flashyLoader
+  setTimeout(() => {
+    body.removeChild(flashyLoader)
+  }, 10000)
+})
