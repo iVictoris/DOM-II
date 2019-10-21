@@ -26,6 +26,7 @@ let keyPressTime;
 let checkKeyPressIntervalId;
 let isTyping;
 let preventModal;
+let activeEditable;
 
 const rainbowShifter = () => {
   rainbow.unshift(rainbow.pop());
@@ -34,6 +35,16 @@ const setColor = nodeList => {
   nodeList.forEach((node, index) => {
     node.style.color = rainbow[(index + 1) % 7]; // color to reset to 0 at 7
   });
+};
+
+const stopKeyPressModal = () => {
+  preventModal = true;
+};
+
+const startKeyPressModal = () => {
+  setTimeout(() => {
+    preventModal = false;
+  }, 100)
 };
 
 const showModalContainer = () => {
@@ -47,7 +58,6 @@ const hideModalContainer = () => {
 const getTime = () => new Date().getTime();
 const getTimeDifference = (firstTime, secondTime, format) =>
   (secondTime - firstTime) / format;
-
 
 navH1.addEventListener("mouseenter", e => {
   // assign a letter a color
@@ -91,74 +101,103 @@ body.addEventListener("keydown", ev => {
   checkKeyPressIntervalId = setInterval(() => {
     const now = getTime();
     isTyping = getTimeDifference(keyPressTime, now, 100) < 5;
-  }, 100); // every half a second, check if user is still typing
+  }, 100); // every tenth of a second, check if user is still typing
 
   showModalContainer();
+  modal.textContent = ev.key;
+  modal.classList = "modalBox";
 });
 
-body.addEventListener("keyup", ev => {
+body.addEventListener("keyup", ev => { 
   setTimeout(() => {
     if (!isTyping && !preventModal) {
       clearInterval(checkKeyPressIntervalId);
       hideModalContainer();
-    
+      modal.textContent = "";
+      modal.classList = "";
     }
   }, 500);
 });
 
 imgs.forEach(img =>
   img.addEventListener("click", ev => {
-    // on click, we get the file path for the image
-    const { src } = ev.target;
-    // create new img
-
-    const img = document.createElement("img");
-    // link img to source
-    img.src = src;
-    // place inside modal container
+    stopKeyPressModal();
     showModalContainer();
-    
-    preventModal = true;
+
+    const { src } = ev.target;
+    const img = document.createElement("img");
+    img.src = src;
+
+    // place inside modal container
+    if (modal.contains(img)) {
+      return;
+    }
+    modal.appendChild(img);
+    modal.classList = "imgModal";
+    modalContainer.focus();
   })
 );
 
 // add event listerner on modal container in which on click, the modal closes
 modalContainer.addEventListener("click", function(ev) {
-  preventModal = false;
   const img = ev.target.querySelector("img");
   if (img) {
-    
-    hideModalContainer();
+    modal.removeChild(img);
   }
+  hideModalContainer();
+  modal.classList = "";
+
+  startKeyPressModal();
 });
+
+
 
 // select event
 ps.forEach(pNode => {
+  // when double clicked
   pNode.addEventListener("dblclick", ev => {
+    stopKeyPressModal();
+    activeEditable = pNode;
     pNode.contentEditable = true;
     pNode.classList.add("editable");
-    pNode.focus();
-    preventModal = true;
-  });
-
-  pNode.addEventListener("keydown", ({ keyCode }) => {
-    if (keyCode === 27) {
-      pNode.contentEditable = false;
-      pNode.classList.remove("editable");
-      setTimeout(() => {
-        preventModal = false;
-      }, 100);
-    }
-  });
-
-  pNode.addEventListener("focus", ev => {
+    // pNode is copied to p
     p.textContent = pNode.textContent;
     p.contentEditable = true;
+    p.classList = 'editing'
+    // p is added to modal
     modal.appendChild(p);
-    showModalContainer();
-  });
+    modal.classList = "focusModal";
+    // modal appears
 
+    showModalContainer();
+    p.focus();
+
+    
+  });
   // p.addEventListener("select", ev => {
   //   console.log(ev);
   // });
 });
+p.tabIndex = -1 // magic for keydown, keyup events
+p.addEventListener("keydown", ev => {
+  if (ev.keyCode === 27) {
+    activeEditable.textContent = p.textContent;
+    activeEditable.contentEditable = false;
+    activeEditable.classList = "";
+    modal.removeChild(p);
+    hideModalContainer();
+    startKeyPressModal();
+  }
+});
+
+modalContainer.tabIndex = -1;
+modalContainer.addEventListener('keydown', ({keyCode}) => {
+  if (keyCode === 27) {
+    const children = Array.from(modal.children);
+    if (children.length) {
+      children.forEach(child => modal.removeChild(child));
+    }
+    hideModalContainer();
+    startKeyPressModal();
+  }
+})
